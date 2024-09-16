@@ -9,5 +9,5 @@
 
 ## Professeurs encadrants :  
 
-* Billel DERBEL  
+* Mr. Billel DERBEL  
 * à venir...  
