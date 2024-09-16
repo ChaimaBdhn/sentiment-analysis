@@ -13,3 +13,6 @@ Ce projet est réalisé par Chaïma BOUDEHANE et Mohamed OUKAS, étudiants en `M
 ## Choix des algorithmes d'apprentissage  
 
 Nous devons commencer par implémenter 3 algorithmes d'apprentissage   
+
+
+je fait un test 
