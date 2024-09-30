@@ -14,5 +14,3 @@ Ce projet est réalisé par Chaïma BOUDEHANE et Mohamed OUKAS, étudiants en `M
 
 Nous devons commencer par implémenter 3 algorithmes d'apprentissage   
 
-
-je fait un test 
