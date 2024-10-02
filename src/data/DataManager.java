@@ -31,7 +31,7 @@ public class DataManager {
      * @param initialTweet
      * @return the matchers list
      */
-    private ArrayList initMatchersList(String initialTweet) {
+    private void initMatchersList(String initialTweet) {
         // Creating regex patterns to compare with the given tweet
         Pattern p_hashtag = Pattern.compile(HASHTAG_REGEX);
         Pattern p_at = Pattern.compile(AT_REGEX);
@@ -47,20 +47,19 @@ public class DataManager {
         this.matchersList.add(m_at);
         this.matchersList.add(m_rt);
         this.matchersList.add(m_url);
-        
-        return this.matchersList;
+
     }
 
 
     /** Cleans a tweet from its url, @, RT, #
-     * @param ..
+     * @param initialTweet
      * @return the tweet cleaned
      */
     private String cleanTweet(String initialTweet) {
         initMatchersList(initialTweet); // initializes a list with all matcher to compare with initial tweet
         for(Matcher m : this.matchersList) {
             if(m.find()) {
-                initialTweet.replaceAll("");
+                //initialTweet.replaceAll(""); todo
             }
         }
     }
@@ -70,20 +69,21 @@ public class DataManager {
      * @param initialTweet
      */
     private String deleteEmoticons(String initialTweet) {
+        return "";
     }
 
     /** Deletes duplicated tweets :
      * @param initialTweet
      */
     private String deleteDuplicatedTweets(String initialTweet) {
-
+        return "";
     }
 
-    /** Gets the tweets written in french
+    /** Gets the tweets written in French
      * @param initialTweet
      */
     private String getFrenchTweets(String initialTweet) {
-
+        return "";
     }
 
 
