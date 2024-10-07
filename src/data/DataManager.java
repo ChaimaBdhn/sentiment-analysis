@@ -1,10 +1,8 @@
 package data;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.*;
 
 
 /* Class aiming to clean tweets from specific characters */
@@ -16,7 +14,7 @@ public class DataManager {
     private static final String RT_REGEX = "\\bRT\\b";
     private static final String URL_REGEX = "https?://\\S+\\s+?";
     
-    private static final String POSITIVE_EMOTICONS = ":\\)|:-\\)|:D|\\(:|<3";
+    private static final String POSITIVE_EMOTICONS = ":\\)|:-\\)|:D|\\(:|<3|=\\)|\\(=";
     private static final String NEGATIVE_EMOTICONS = ":\\(|:'\\(|:/|\\):|\\)':";
 
     private String file;
@@ -34,7 +32,7 @@ public class DataManager {
      * @param initialTweet
      * @return the tweet cleaned
      */
-    public String cleanTweet(String initialTweet) {
+    private String cleanTweet(String initialTweet) {
         initialTweet = initialTweet.replaceAll(HASHTAG_REGEX, "");
         initialTweet = initialTweet.replaceAll(AT_REGEX, "");
         initialTweet = initialTweet.replaceAll(RT_REGEX, "");
@@ -48,7 +46,7 @@ public class DataManager {
      * @param initialTweet given 
      * @return the new tweet cleaned from emocticons
      */
-    public String removeEmoticons(String initialTweet) {
+    private String removeEmoticons(String initialTweet) {
         if(initialTweet.contains(POSITIVE_EMOTICONS) && initialTweet.contains(NEGATIVE_EMOTICONS)) {
             initialTweet = initialTweet.replaceAll(POSITIVE_EMOTICONS, "");
             initialTweet = initialTweet.replaceAll(NEGATIVE_EMOTICONS, "");

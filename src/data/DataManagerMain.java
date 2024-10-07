@@ -1,9 +1,6 @@
 package data;
 
-import java.io.File;
 import java.util.Set;
-
-import static data.CSVReader.*;
 
 public class DataManagerMain {
     public static void main(String[] args) {
@@ -17,7 +14,7 @@ public class DataManagerMain {
             System.out.println(cleanedTweet);
         }
 
-        String outputFile = "tweets-cleaned.csv";
+        String outputFile = "tweets-cleaned.csv"; // new File ?
         dm.writeTweets(cleaned, outputFile);
 
 //        readCSV(outputFile);
