@@ -34,6 +34,21 @@ public class DataManager {
     //     this.matchersList.add(m_url);
     // }
 
+    /* Hashset that will contain tweets */
+    // private Set<String> uniqueTweets; 
+
+    private String file;
+
+
+    public DataManager(File filePath) {
+        // this.uniqueTweets = new HashSet<>(); // where we'll store non duplicated tweets
+        this.file = filePath;
+    }
+
+    public File getFile() {
+        return this.file;
+    }
+
 
     /** Cleans a tweet from its url, @, RT, #
      * @param initialTweet
@@ -49,52 +64,57 @@ public class DataManager {
     }
     
 
-    /** Gets the tweets written in French
-     * @param initialTweet
-     */
-    public String getFrenchTweets(String initialTweet) {
-        return "";
-    }
-    
-
     /** Deletes positive AND negative emoticons contained in a given tweet
      * @param initialTweet given 
      * @return the new tweet cleaned from emocticons
      */
-    public String deleteEmoticons(String initialTweet) {
+    public String removeEmoticons(String initialTweet) {
         if(initialTweet.contains(POSITIVE_EMOTICONS) && initialTweet.contains(NEGATIVE_EMOTICONS)) {
             initialTweet = initialTweet.replaceAll(POSITIVE_EMOTICONS, "");
             initialTweet = initialTweet.replaceAll(NEGATIVE_EMOTICONS, "");
         }
         return initialTweet.trim();
     }
+
+    /**
+     * 
+     */
+    public Set<String> CleanAllTweets(Set<String> uniqueTweets) {
+        for(String tweet : uniqueTweets) {
+            this.cleanTweet(tweet);
+            this.deleteEmoticons(tweet);
+        }
+        return uniqueTweets;
+    }
     
     
     /** Remove duplicated tweets by using an hashset : stores each tweet in the hashset so that it contains only unique tweets,
      * ignoring the duplicated ones (property of hashset)
      * @param csvFile the file containing all the tweets
+     * 
      */
     public Set<String> removeDuplicateTweets(File csvFile) {
-        Set<String> uniqueTweets = new HashSet<>(); // where we'll store non duplicated tweets
+        Set<String> uniqueTweets = new HashSet<>(); 
 
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
                 String tweet = values[5]; // Each tweet is in the sixth column (index 5)
-                uniqueTweets.add(tweet);
+                this.uniqueTweets.add(tweet);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return uniqueTweets;
+        return this.uniqueTweets;
     }
 
 
-    /** 
-     * 
+    /** Writes each tweet from the hashset in an output file
+     * @param tweets
+     * @param outputFile 
      */
-    public void writeTweets(Set<String> tweets, File output) {
+    public void writeTweets(Set<String> tweets, File outputFile) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
             for (String tweet : uniqueTweets) {
                 bw.write(tweet);
@@ -105,6 +125,14 @@ public class DataManager {
         }
     }
 
+
+    
+    /** Gets the tweets written in French
+     * @param initialTweet
+     */
+    public String getFrenchTweets(String initialTweet) {
+        return 0;
+    }
 
 
 }
