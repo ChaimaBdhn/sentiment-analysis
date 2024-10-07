@@ -1,6 +1,9 @@
 package data;
 
+import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.*;
 
 
@@ -16,36 +19,13 @@ public class DataManager {
     private static final String POSITIVE_EMOTICONS = ":\\)|:-\\)|:D|\\(:|<3";
     private static final String NEGATIVE_EMOTICONS = ":\\(|:'\\(|:/|\\):|\\)':";
 
-    // private void initMatchersList(String initialTweet) {
-    //     // Creating regex patterns to compare with the given tweet
-    //     Pattern p_hashtag = Pattern.compile(HASHTAG_REGEX);
-    //     Pattern p_at = Pattern.compile(AT_REGEX);
-    //     Pattern p_rt = Pattern.compile(RT_REGEX);
-    //     Pattern p_url = Pattern.compile(URL_REGEX);
-
-    //     Matcher m_hashtag = p_hashtag.matcher(initialTweet);
-    //     Matcher m_at = p_at.matcher(initialTweet);
-    //     Matcher m_rt = p_rt.matcher(initialTweet);
-    //     Matcher m_url = p_url.matcher(initialTweet);
-        
-    //     this.matchersList.add(m_hashtag);
-    //     this.matchersList.add(m_at);
-    //     this.matchersList.add(m_rt);
-    //     this.matchersList.add(m_url);
-    // }
-
-    /* Hashset that will contain tweets */
-    // private Set<String> uniqueTweets; 
-
     private String file;
 
-
-    public DataManager(File filePath) {
-        // this.uniqueTweets = new HashSet<>(); // where we'll store non duplicated tweets
+    public DataManager(String filePath) {
         this.file = filePath;
     }
 
-    public File getFile() {
+    public String getFile() {
         return this.file;
     }
 
@@ -80,33 +60,36 @@ public class DataManager {
      * 
      */
     public Set<String> CleanAllTweets(Set<String> uniqueTweets) {
+        Set<String> cleanedTweets = new HashSet<>();
+
         for(String tweet : uniqueTweets) {
-            this.cleanTweet(tweet);
-            this.deleteEmoticons(tweet);
+            String cleaned = this.cleanTweet(tweet);
+            cleaned = this.removeEmoticons(cleaned);
+            cleanedTweets.add(cleaned); // adds the cleaned tweet
         }
-        return uniqueTweets;
+        return cleanedTweets; // returns the cleaned set
     }
     
     
-    /** Remove duplicated tweets by using an hashset : stores each tweet in the hashset so that it contains only unique tweets,
+    /** Remove duplicated tweets by using a hashset : stores each tweet in the hashset so that it contains only unique tweets,
      * ignoring the duplicated ones (property of hashset)
      * @param csvFile the file containing all the tweets
      * 
      */
-    public Set<String> removeDuplicateTweets(File csvFile) {
-        Set<String> uniqueTweets = new HashSet<>(); 
+    public Set<String> removeDuplicateTweets(String csvFile) {
+        Set<String> uniqueTweets = new HashSet<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
                 String tweet = values[5]; // Each tweet is in the sixth column (index 5)
-                this.uniqueTweets.add(tweet);
+                uniqueTweets.add(tweet);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return this.uniqueTweets;
+        return uniqueTweets;
     }
 
 
@@ -114,9 +97,9 @@ public class DataManager {
      * @param tweets
      * @param outputFile 
      */
-    public void writeTweets(Set<String> tweets, File outputFile) {
+    public void writeTweets(Set<String> tweets, String outputFile) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
-            for (String tweet : uniqueTweets) {
+            for (String tweet : tweets) {
                 bw.write(tweet);
                 bw.newLine(); // New line after each tweet
             }
@@ -131,7 +114,7 @@ public class DataManager {
      * @param initialTweet
      */
     public String getFrenchTweets(String initialTweet) {
-        return 0;
+        return "0";
     }
 
 
