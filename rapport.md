@@ -10,7 +10,18 @@ Ce projet est réalisé par Chaïma BOUDEHANE et Mohamed OUKAS, étudiants en `M
 **Ce PJE consiste à développer une application qui permet de classifier le sentiment général (positif, négatif, neutre) exprimé dans des tweets donnés sur un sujet donné (par exemple, réchauffement climatique). Pour cela des algorithmes d'apprentissage supervisé classiques (Dictionnaire, KNN, Bayes) seront développés et leurs performances analysées.**  
 
 
-## Choix des algorithmes d'apprentissage  
+## 1. Nettoyage des tweets  
 
-Nous devons commencer par implémenter 3 algorithmes d'apprentissage   
+Nous avons pu implémenter une classe qui prépare nos données. D'après notre fichier csv qui contiendra principalement des tweets en français sur différents 
+sujets (VLille, équipe de France, élection présidentielle), nous "nettoyons" chaque tweet des symboles suivants : **@**, **RT**, **URL**, **#**, ...
+Nous récupérons depuis ce fichier uniquement la dernière colonne qui contient les tweets, puis après récupération et nettoyage, nous produisons un nouveau fichier csv en sortie contenant
+les tweets dépourvus de symboles et d'urls. 
+Sur cette base, nous pouvons ainsi débuter l'implémentation des algorithmes d'apprentissage.  
+
+
+## 2. Implémentation des algorithmes d'apprentissage  
+
+Nous devons commencer par implémenter 3 algorithmes d'apprentissage : **Dictionnaire**, **KNN** et **Bayes**. Ce sont différentes méthodes pour apprendre et déterminer un résultat après analyse de tweets.  
+
+
 
