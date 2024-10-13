@@ -1,10 +1,5 @@
 package algo;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,24 +9,20 @@ public class KNNClassifier {
 
     private static final String REGEX = "[,\\.\\s]+";
 
+    private static final int NEGATIVE = 0, NEUTRAL = 2, POSITIVE = 4 ; 
+
+
     public KNNClassifier() { }
 
-    /** Counts total word of a tweet ??? todo
+    /** Counts total word of both tweets ???
      *
-     * @param csv
+     * @param 
      * @return
      */
-    private int countWords(File csv) {
-        try (BufferedReader br = new BufferedReader(new FileReader(csv))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] words = line.split(",");
-                String tweet = words[5]; // Each tweet is in the sixth column (index 5)
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return  0; // todo
+    public int totalWords(String firstTweet, String secondTweet) {
+        String firstTweetWords[] = firstTweet.toLowerCase().split(REGEX);
+        String secondTweetWords[] = secondTweet.toLowerCase().split(REGEX);
+        return firstTweetWords.length + secondTweetWords.length;
     }
 
 
@@ -40,7 +31,7 @@ public class KNNClassifier {
      * @param secondTweet the second tweet
      * @return the total number
      */
-    private int nbIdenticalWords(String firstTweet, String secondTweet) {
+    public int nbIdenticalWords(String firstTweet, String secondTweet) {
         int counter = 0;
         String firstTweetWords[] = firstTweet.toLowerCase().split(REGEX);
         String secondTweetWords[] = secondTweet.toLowerCase().split(REGEX);
@@ -58,8 +49,19 @@ public class KNNClassifier {
 
 
 
+    /**
+     * @param firstTweet
+     * @param secondTweet
+     * @return
+     */
+    public int distance(String firstTweet, String secondTweet) {
+        int dist = (this.totalWords(firstTweet, secondTweet) - this.nbIdenticalWords(firstTweet, secondTweet) /  this. totalWords(firstTweet, secondTweet));
 
-    private int distance(String firstTweet, String secondTweet) {
+        return dist;
+    }
+
+
+    public int knn() {
 
     }
 
