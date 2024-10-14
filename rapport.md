@@ -25,3 +25,21 @@ Nous devons commencer par implémenter 3 algorithmes d'apprentissage : **Diction
 
 
 
+
+
+
+
+### Pour l'application : 
+
+
+Si le fichier data importé est annoté alors :
+
+ - KNN --> Afficher le résulat
+
+
+Si le fichier data importé n'est pos annoté  on a 2 cas : 
+
+
+ - Soit l'utilisateur peut annoté les données -> puis utilisé KNN --> afficher le résultat
+
+ - Soit l'utilisateur ne veut pas --> on utilise l'annotation auto (exercice 2) --> puis utilisé KNN --> afficher le résultat
