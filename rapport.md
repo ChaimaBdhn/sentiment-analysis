@@ -12,9 +12,9 @@ Ce projet est réalisé par Chaïma BOUDEHANE et Mohamed OUKAS, étudiants en `M
 
 ## 1. Nettoyage des tweets  
 
-Nous avons pu implémenter une classe qui prépare nos données. D'après notre fichier csv qui contiendra principalement des tweets en français sur différents 
+Nous avons pu implémenter une classe qui prépare nos données. D'après notre fichier `csv` qui contiendra principalement des tweets en français sur différents 
 sujets (VLille, équipe de France, élection présidentielle), nous "nettoyons" chaque tweet des symboles suivants : **@**, **RT**, **URL**, **#**, ...
-Nous récupérons depuis ce fichier uniquement la dernière colonne qui contient les tweets, puis après récupération et nettoyage, nous produisons un nouveau fichier csv en sortie contenant
+Nous récupérons depuis ce fichier uniquement la dernière colonne qui contient les tweets, puis après récupération et nettoyage, nous produisons un nouveau fichier `csv` en sortie contenant
 les tweets dépourvus de symboles et d'urls. 
 Sur cette base, nous pouvons ainsi débuter l'implémentation des algorithmes d'apprentissage.  
 
@@ -40,6 +40,6 @@ Si le fichier data importé est annoté alors :
 Si le fichier data importé n'est pos annoté  on a 2 cas : 
 
 
- - Soit l'utilisateur peut annoté les données -> puis utilisé KNN --> afficher le résultat
+ - Soit l'utilisateur peut annoter les données -> puis utiliser KNN --> afficher le résultat
 
- - Soit l'utilisateur ne veut pas --> on utilise l'annotation auto (exercice 2) --> puis utilisé KNN --> afficher le résultat
+ - Soit l'utilisateur ne veut pas --> on utilise l'annotation auto (exercice 2) --> puis utiliser KNN --> afficher le résultat
