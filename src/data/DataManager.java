@@ -18,9 +18,11 @@ public class DataManager {
     private static final String NEGATIVE_EMOTICONS = ":\\(|:'\\(|:/|\\):|\\)':";
 
     private String file;
+    private Set<String> cleanedTweets;
 
     public DataManager(String filePath) {
         this.file = filePath;
+        this.cleanedTweets = new HashSet<>();
     }
 
     public String getFile() {
@@ -54,21 +56,7 @@ public class DataManager {
         return initialTweet.trim();
     }
 
-    /**
-     * 
-     */
-    public Set<String> CleanAllTweets(Set<String> uniqueTweets) {
-        Set<String> cleanedTweets = new HashSet<>();
 
-        for(String tweet : uniqueTweets) {
-            String cleaned = this.cleanTweet(tweet);
-            cleaned = this.removeEmoticons(cleaned);
-            cleanedTweets.add(cleaned); // adds the cleaned tweet
-        }
-        return cleanedTweets; // returns the cleaned set
-    }
-    
-    
     /** Remove duplicated tweets by using a hashset : stores each tweet in the hashset so that it contains only unique tweets,
      * ignoring the duplicated ones (property of hashset)
      * @param csvFile the file containing all the tweets
@@ -91,6 +79,21 @@ public class DataManager {
     }
 
 
+    /**
+     *
+     */
+    public Set<String> CleanAllTweets() {
+        Set<String> uniqueTweets = this.removeDuplicateTweets(this.getFile());
+
+        for(String tweet : uniqueTweets) {
+            String cleaned = this.cleanTweet(tweet);
+            cleaned = this.removeEmoticons(cleaned);
+            this.cleanedTweets.add(cleaned); // adds the cleaned tweet
+        }
+        return this.cleanedTweets; // returns the cleaned set
+    }
+
+
     /** Writes each tweet from the hashset in an output file
      * @param tweets
      * @param outputFile 
@@ -108,12 +111,15 @@ public class DataManager {
 
 
     
-    /** Gets the tweets written in French
+    /** Gets the tweets written in French todo
      * @param initialTweet
      */
     public String getFrenchTweets(String initialTweet) {
         return "0";
     }
+
+
+
 
 
 }
