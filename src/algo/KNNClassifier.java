@@ -1,8 +1,10 @@
 package algo;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
 
 /* This class aims to implement KNN algorithm */
 public class KNNClassifier {
@@ -61,8 +63,38 @@ public class KNNClassifier {
     }
 
 
-    public int knn() {
+    /** Reads the file and gives a learning base
+     * @param csvFile the file containing tweets
+     * @return the list containing all tweets of the file (learning base)
+     */
+    public List<String> readFile(File csvFile) {
+        List <String> learningBase = new ArrayList<>();
 
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                learningBase.addAll(Arrays.asList(values));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return learningBase;
+    }
+
+
+    /**
+     *
+     * @param tweet
+     * @param learningBase
+     * @param k the number of neighbors
+     * @return
+     */
+    public String classifyTweet(String tweet, List<String> learningBase, int k) {
+
+        for(String tweet : learningBase) {
+
+        }
     }
 
 
