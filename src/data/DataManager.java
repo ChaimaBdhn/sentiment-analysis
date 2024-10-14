@@ -8,53 +8,32 @@ import java.util.Set;
 /* Class aiming to clean tweets from specific characters */
 public class DataManager {
 
-
-    private static final String HASHTAG_REGEX = "#\\w+";
-    private static final String AT_REGEX = "@\\w+";
-    private static final String RT_REGEX = "\\bRT\\b";
-    private static final String URL_REGEX = "https?://\\S+\\s+?";
-    
-    private static final String POSITIVE_EMOTICONS = ":\\)|:-\\)|:D|\\(:|<3|=\\)|\\(=";
-    private static final String NEGATIVE_EMOTICONS = ":\\(|:'\\(|:/|\\):|\\)':";
-
-    private String file;
     private Set<String> cleanedTweets;
 
-    public DataManager(String filePath) {
-        this.file = filePath;
-        this.cleanedTweets = new HashSet<>();
-    }
 
-    public String getFile() {
-        return this.file;
+    public DataManager (){
+        cleanedTweets = new HashSet<String>();
     }
 
 
-    /** Cleans a tweet from its url, @, RT, #
-     * @param initialTweet
-     * @return the tweet cleaned
-     */
-    private String cleanTweet(String initialTweet) {
-        initialTweet = initialTweet.replaceAll(HASHTAG_REGEX, "");
-        initialTweet = initialTweet.replaceAll(AT_REGEX, "");
-        initialTweet = initialTweet.replaceAll(RT_REGEX, "");
-        initialTweet = initialTweet.replaceAll(URL_REGEX, "");
+   /**
+    * 
+    * @param csvFile
+    * @return
+    */
+    public Set<String> cleanAllTweets(String csvFile) {
+        
+        Set<String> uniqueTweets = this.removeDuplicateTweets(csvFile);
 
-        return initialTweet.trim(); // deletes spaces that would be caused by the replacement
-    }
-    
-
-    /** Deletes positive AND negative emoticons contained in a given tweet
-     * @param initialTweet given 
-     * @return the new tweet cleaned from emocticons
-     */
-    private String removeEmoticons(String initialTweet) {
-        if(initialTweet.contains(POSITIVE_EMOTICONS) && initialTweet.contains(NEGATIVE_EMOTICONS)) {
-            initialTweet = initialTweet.replaceAll(POSITIVE_EMOTICONS, "");
-            initialTweet = initialTweet.replaceAll(NEGATIVE_EMOTICONS, "");
+        for(String tweet : uniqueTweets) {
+            String cleaned = TweetCleaner.cleanTweet(tweet);
+            this.cleanedTweets.add(cleaned); // adds the cleaned tweet
         }
-        return initialTweet.trim();
+        return this.cleanedTweets; // returns the cleaned set
     }
+
+
+
 
 
     /** Remove duplicated tweets by using a hashset : stores each tweet in the hashset so that it contains only unique tweets,
@@ -62,7 +41,7 @@ public class DataManager {
      * @param csvFile the file containing all the tweets
      * 
      */
-    public Set<String> removeDuplicateTweets(String csvFile) {
+    private Set<String> removeDuplicateTweets(String csvFile) {
         Set<String> uniqueTweets = new HashSet<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
@@ -79,28 +58,14 @@ public class DataManager {
     }
 
 
-    /**
-     *
-     */
-    public Set<String> CleanAllTweets() {
-        Set<String> uniqueTweets = this.removeDuplicateTweets(this.getFile());
-
-        for(String tweet : uniqueTweets) {
-            String cleaned = this.cleanTweet(tweet);
-            cleaned = this.removeEmoticons(cleaned);
-            this.cleanedTweets.add(cleaned); // adds the cleaned tweet
-        }
-        return this.cleanedTweets; // returns the cleaned set
-    }
-
 
     /** Writes each tweet from the hashset in an output file
      * @param tweets
      * @param outputFile 
      */
-    public void writeTweets(Set<String> tweets, String outputFile) {
+    public void writeTweets(Set<String> cleanedtweets, String outputFile) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
-            for (String tweet : tweets) {
+            for (String tweet : cleanedtweets) {
                 bw.write(tweet);
                 bw.newLine(); // New line after each tweet
             }
@@ -110,7 +75,23 @@ public class DataManager {
     }
 
 
+
+
+    /**
+     * clean given csv file and write all cleaned tweets in a output file (its path is given in parameter)
+     * @param csvFileToClean path to the csv file to clean
+     * @param outputFile path to the output file
+     */
+    public void CleanAllTweetsAndWriteTweets (String csvFileToClean, String outputFile){
+        
+        this.writeTweets(this.cleanAllTweets(csvFileToClean), outputFile);
+    }
+
     
+
+
+
+
     /** Gets the tweets written in French todo
      * @param initialTweet
      */

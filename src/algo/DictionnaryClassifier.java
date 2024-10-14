@@ -1,14 +1,10 @@
 package algo;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -31,12 +27,14 @@ public class DictionnaryClassifier implements ClassifierAlgorithm{
     private static final int NEGATIVE = 0, NEUTRAL = 2, POSITIVE = 4 ; 
 
 
-    private static final String OUTPUTCSVFILE = "./data/tweets_analyse.csv";
-
+    private static final String OUTPUTFILE = "./data/tweets_analyse";
+    private static final String FORMAT_OUTPUT_FILE =".csv";
+    private int index_file_generate;
 
     public DictionnaryClassifier(){
         this.positiveWords = new HashSet<>();
         this.negativeWords = new HashSet<>();
+        this.index_file_generate = 0;
         this.loadData();
     }
 
@@ -76,8 +74,11 @@ public class DictionnaryClassifier implements ClassifierAlgorithm{
     }
 
 
-
- 
+    /**
+     * 
+     * @param tweet
+     * @return
+     */   
     private int analyseOneTweet (String tweet) {
 
         int nb_positive_words = 0;
@@ -103,29 +104,27 @@ public class DictionnaryClassifier implements ClassifierAlgorithm{
 
     }
 
+    /**
+     * 
+     * @param csvFile
+     */
+    public void automaticAnnotation (String csvFile){
 
-    public void automaticAnnotation (File csvFile){
+
+        // Fichier csvFile à nettoyer 
+        DataManager dataManager = new DataManager();
+
+        Set<String> cleanedTweets = dataManager.cleanAllTweets(csvFile);
 
 
-        // Fichier csvFile à ettoyer 
-        DataManager dataManager = new DataManager(csvFile);
-
-        
-        File clean_file =   dataManager.cleanTweet();
-
-        File tweets = new File (clean_file);
-        Scanner scanner = new Scanner (tweets);
 
         HashMap <String,Integer> tweets_with_polarity = new HashMap<>();
 
-        while (scanner.hasNext()){
-            String tweet = scanner.next().trim();
+        for (String tweet : cleanedTweets ){
 
            tweets_with_polarity.put(tweet, analyseOneTweet(tweet));
         }
-        scanner.close();
-     
-        
+              
        GenerateCSVFile (tweets_with_polarity);
 
     }
@@ -135,8 +134,8 @@ public class DictionnaryClassifier implements ClassifierAlgorithm{
 
 
        try {
-
-            FileWriter fileWriter = new FileWriter(OUTPUTCSVFILE);
+            index_file_generate ++;
+            FileWriter fileWriter = new FileWriter(OUTPUTFILE.concat("-").concat(Integer.toString(index_file_generate).concat(FORMAT_OUTPUT_FILE)));
             PrintWriter printWriter = new PrintWriter(fileWriter);
 
             printWriter.println("Tweet,polarity");

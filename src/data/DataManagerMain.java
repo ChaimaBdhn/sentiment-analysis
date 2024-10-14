@@ -5,16 +5,14 @@ import java.util.Set;
 public class DataManagerMain {
     public static void main(String[] args) {
 
-        DataManager dm = new DataManager(args[0]);
-        Set<String> cleaned = dm.CleanAllTweets();
+        DataManager dm = new DataManager();
+      //  Set<String> cleaned = dm.cleanAllTweets(args[0]);
 
-//        for(String cleanedTweet : cleaned) {
-//            System.out.println(cleanedTweet);
-//        }
+    //    for(String cleanedTweet : cleaned) {
+    //        System.out.println(cleanedTweet);
+    //    }
 
-        String outputFile = "tweets-cleaned.csv"; // new File ?
-        dm.writeTweets(cleaned, outputFile);
-
-//        readCSV(outputFile);
+        String outputFile = "./data/tweets-cleaned.csv"; // new File ?
+        dm.CleanAllTweetsAndWriteTweets(args[0], outputFile);
     }
 }
