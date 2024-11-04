@@ -11,7 +11,50 @@ public class KNNClassifier {
 
     private static final String REGEX = "[,\\.\\s]+";
 
-    private static final String NEGATIVE = "0", NEUTRAL = "2", POSITIVE = "4" ;
+    private static final Integer NEGATIVE = 0, NEUTRAL = 2, POSITIVE = 4 ;
+
+    /* Learning base we are using */
+    private Map<String, Integer> learningBase;
+
+
+    /** KNN Classifier is defined by its learning base initially cleaned and tagged
+     * @param csvFile the learning base
+     */
+    public KNNClassifier(File csvFile) {
+        this.learningBase = this.initLearningBase(csvFile);
+    }
+
+
+    /** Returns the learning base
+     * @return the learning base
+     */
+    public Map<String, Integer> getLearningBase() {
+        return this.learningBase;
+    }
+
+
+    /** Opens the csv file and creates a map that associates each tweet as a key, with its class (positive, negative or neutral) as a value
+     * @param csvFile the csv file we change into a learning base
+     * @return the map with each tweet associated with its class
+     */
+    public Map<String, Integer> initLearningBase(File csvFile) {
+        Map<String, Integer> learningBase = new HashMap<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+
+                String key = values[0]; // key is the tweet
+                String value = values[1]; // value is the class of the tweet
+                learningBase.put(key, Integer.valueOf(value));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return learningBase;
+    }
+
 
 
     /** Counts total words of both tweets
@@ -20,8 +63,8 @@ public class KNNClassifier {
      * @return the total number of words 
      */
     public int totalWords(String firstTweet, String secondTweet) {
-        String firstTweetWords[] = firstTweet.toLowerCase().split(REGEX);
-        String secondTweetWords[] = secondTweet.toLowerCase().split(REGEX);
+        String[] firstTweetWords = firstTweet.toLowerCase().split(REGEX);
+        String[] secondTweetWords = secondTweet.toLowerCase().split(REGEX);
         return firstTweetWords.length + secondTweetWords.length;
     }
 
@@ -33,8 +76,8 @@ public class KNNClassifier {
      */
     public int nbIdenticalWords(String firstTweet, String secondTweet) {
         int counter = 0;
-        String firstTweetWords[] = firstTweet.toLowerCase().split(REGEX);
-        String secondTweetWords[] = secondTweet.toLowerCase().split(REGEX);
+        String[] firstTweetWords = firstTweet.toLowerCase().split(REGEX);
+        String[] secondTweetWords = secondTweet.toLowerCase().split(REGEX);
 
         // We put words of the second tweet in a hashset
         Set<String> wordsInSecondTweet = new HashSet<>(Arrays.asList(secondTweetWords));
@@ -55,53 +98,7 @@ public class KNNClassifier {
      * @return the distance of two tweets
      */
     public int distance(String firstTweet, String secondTweet) {
-        int dist = (this.totalWords(firstTweet, secondTweet) - this.nbIdenticalWords(firstTweet, secondTweet) /  this. totalWords(firstTweet, secondTweet));
-
-        return dist;
-    }
-
-
-    /** Reads the file and gives a learning base
-     * @param csvFile the file containing tweets
-     * @return the list containing all tweets of the file (learning base)
-     */
-    // public List<String> readFile(File csvFile) {
-    //     List <String> learningBase = new ArrayList<>();
-
-    //     try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-    //         String line;
-    //         while ((line = br.readLine()) != null) {
-    //             String[] values = line.split(",");
-    //             learningBase.addAll(Arrays.asList(values));
-    //         }
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    //     return learningBase;
-    // }
-
-
-
-    /** Opens the csv file and create a map that associates each tweet with its class (positive, negative or neutral)
-     * @param csvFile the csv file 
-     * @return the map with each tweet associated with its class
-     */
-    public Map<String, String> initLearningBase(File csvFile) {
-        Map<String, String> learningBase = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-                
-                String key = values[5];
-                String value = values[0];
-                learningBase.put(key, value);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return learningBase;
+        return (this.totalWords(firstTweet, secondTweet) - this.nbIdenticalWords(firstTweet, secondTweet) /  this. totalWords(firstTweet, secondTweet));
     }
 
 
@@ -121,28 +118,12 @@ public class KNNClassifier {
     }
 
 
-    /** Gets the greater distance between a given tweet and each nearest neighbor from a list
-     * @param x the given tweet
-     * @param nearestNeighbors the list of nearest neighbors
-     * @return the greater distance
+    /** Returns the furthest tweet from a map
+     * @param x the tweet we want to tag
+     * @param tweets the map of tweets // todo
+     * @return the furthest
      */
-    // public int getGreaterDistance(String x, List<String> nearestNeighbors) {
-    //     List<Integer> distances = new ArrayList<>();
-
-    //     for(String neighbor : nearestNeighbors) {
-    //         int dist = this.distance(x, neighbor);
-    //         distances.add(dist);
-    //     }
-    //     Collections.sort(distances);
-    //     return distances.get(distances.size() - 1); 
-    // }
-
-    /**
-     * @param x
-     * @param tweets
-     * @return
-     */
-    public String getFurthestTweet(String x, Map<String, String> tweets) {
+    public String getFurthestTweet(String x, Map<String, Integer> tweets) {
         String furthest = null;
         int maxDistance = -1;
         
@@ -158,27 +139,27 @@ public class KNNClassifier {
     }
     
 
-    /**
-     * @param target
-     * @param values
-     * @return
+    /** Checks if an integer is less than any element in a list of integers.
+     * @param target the integer we want to verify if it is lesser
+     * @param values the list of integers
+     * @return true if a given integer is less than at least one of the elements of the list, false if not
      */
     public boolean isLessThanAny(int target, List<Integer> values) {
         return values.stream().anyMatch(value -> target < value);
     }    
 
 
-
-    /** Votes for the majority class 
+    /** Votes for the majority class
      * @param nearestNeighbors list of the nearest neighbors
      * @return the value of majority class
+     * todo : should we use List<Integer> only in parameter ?
      */
-    public String vote(Map<String, String> nearestNeighbors) {
+    public Integer vote(Map<String, Integer> nearestNeighbors) {
         int negative_cpt = 0;
         int neutral_cpt = 0;
         int positive_cpt = 0;
 
-        for(String value : nearestNeighbors.values()) {
+        for(Integer value : nearestNeighbors.values()) {
             if(value.equals(NEGATIVE))
                 negative_cpt++;
             if(value.equals(NEUTRAL))
@@ -199,57 +180,56 @@ public class KNNClassifier {
     }
     
 
-    // public String vote(Map<String, String> nearestNeighbors) {
-    //     Map<String, Integer> counts = new HashMap<>();
-    //     counts.put(NEGATIVE, 0);
-    //     counts.put(NEUTRAL, 0);
-    //     counts.put(POSITIVE, 0);
-    
-    //     for (String value : nearestNeighbors.values()) {
-    //         counts.put(value, counts.get(value) + 1);
-    //     }
-    
-    //     return counts.entrySet().stream()
-    //                  .max(Map.Entry.comparingByValue())
-    //                  .get()
-    //                  .getKey();
-    // }
-    
+//     public String vote(Map<String, String> nearestNeighbors) {
+//         Map<String, Integer> counts = new HashMap<>();
+//         counts.put(NEGATIVE, 0);
+//         counts.put(NEUTRAL, 0);
+//         counts.put(POSITIVE, 0);
+//
+//         for (String value : nearestNeighbors.values()) {
+//             counts.put(value, counts.get(value) + 1);
+//         }
+//
+//         return counts.entrySet().stream()
+//                      .max(Map.Entry.comparingByValue())
+//                      .get()
+//                      .getKey();
+//     }
+
 
 
     /** Classifies a tweet according to the KNN algorithm 
-     * @param tweet the tweet to tag 
-     * @param learningBase the cleaned tweets 
-     * @param k the number of neighbors 
-     * @return ??? 
-     * mettre dans une map la classe associée au tweet (en utilisant la base d'apprentissage ??)
-     * la base est étiquetée ET nettoyée au préalable !!
+     * @param x the tweet to tag
+     * @param k the number of neighbors
+     * @return the majority class of the tweet : positive, negative or neutral
      */
-    public String classifyTweet(String x, Map<String, String> learningBase, int k) {
-        Map<String, String> proches_voisins = new HashMap<>();
+    public Integer classifyTweet(String x, int k) {
+        Map<String, Integer> proches_voisins = new HashMap<>();
 
         int count = 0; 
-        for(String tweetNeighbor : learningBase.keySet()) { 
+        for(String tweetNeighbor : this.learningBase.keySet()) {
             if(count <= k) {
-                proches_voisins.put(tweetNeighbor, learningBase.get(tweetNeighbor)); // ajoute dans la map le tweet voisin (clé) et récupère sa valeur associée selon la clé pour l'ajouter
+                proches_voisins.put(tweetNeighbor, this.learningBase.get(tweetNeighbor)); // ajoute dans la map le tweet voisin (clé) et récupère sa valeur associée selon la clé pour l'ajouter
                 count++;                
+            } else {
+                break;
             }
         }
 
-        for(String tweetNeighbor : learningBase.keySet()) {
+        for(String tweetNeighbor : this.learningBase.keySet()) {
             // on parcourt le reste des tweets de la base à partir de k+1 (on prends donc ceux qui n'ont pas encore été ajoutés)
             if(!proches_voisins.containsKey(tweetNeighbor)) {
                 int distToNeighbor = distance(tweetNeighbor, x);
-                List<Integer> distXtoProchesVoisins = allDistances(x, proches_voisins);
+                List<Integer> distXtoProchesVoisins = allDistances(x, new ArrayList<>(proches_voisins.keySet()));
 
                 if(this.isLessThanAny(distToNeighbor, distXtoProchesVoisins)) {
                     String furthestTweet = this.getFurthestTweet(x, proches_voisins);
                     proches_voisins.remove(furthestTweet);
-                    proches_voisins.put(tweetNeighbor, learningBase.get(tweetNeighbor));                    
+                    proches_voisins.put(tweetNeighbor, this.learningBase.get(tweetNeighbor));
                 }
             }
         }
-        vote(proches_voisins);
+        return vote(proches_voisins);
     }
 
 
