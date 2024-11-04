@@ -60,8 +60,8 @@ public class DictionnaryClassifier implements ClassifierAlgorithm{
      */
     private void loadDataInSet(String fileName, Set<String> setToSet) throws FileNotFoundException {
        
-        File positiveWords = new File (fileName);
-        Scanner scanner = new Scanner (positiveWords);
+        File words = new File (fileName);
+        Scanner scanner = new Scanner (words);
         
         scanner.useDelimiter(",");
 
@@ -121,10 +121,13 @@ public class DictionnaryClassifier implements ClassifierAlgorithm{
         HashMap <String,Integer> tweets_with_polarity = new HashMap<>();
 
         for (String tweet : cleanedTweets ){
-
-           tweets_with_polarity.put(tweet, analyseOneTweet(tweet));
+            int polarity = analyseOneTweet(tweet);
+           tweets_with_polarity.put(tweet, polarity);
+           //System.out.println(tweet + " : " + polarity);
         }
-              
+        // for (String key : tweets_with_polarity.keySet()){
+        //     System.out.println(key + " :    " + tweets_with_polarity.get(key));
+        // }
        GenerateCSVFile (tweets_with_polarity);
 
     }
@@ -142,8 +145,10 @@ public class DictionnaryClassifier implements ClassifierAlgorithm{
 
             for (String tweet : tweets_with_polarity.keySet()){
                 
-                tweet = tweet.replace (","," ");
+                // tweet = tweet.replace (","," ");
+                // System.out.println(tweet);
                 printWriter.println(tweet + "," + tweets_with_polarity.get(tweet));
+                
             }
 
             printWriter.close();

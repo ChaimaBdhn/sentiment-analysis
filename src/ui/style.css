@@ -1,0 +1,19 @@
+/* style.css */
+
+.root {
+    -fx-font-family: Arial;
+    -fx-background-color: #f0f0f0;
+}
+
+.text-field, .text-area {
+    -fx-border-color: #4CAF50;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-background-color: white;
+}
+
+.button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
