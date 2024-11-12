@@ -108,15 +108,11 @@ public class DictionnaryClassifier implements ClassifierAlgorithm{
      * 
      * @param csvFile
      */
-    public void automaticAnnotation (String csvFile){
-
-
+    public void automaticAnnotation (String csvFile) {
         // Fichier csvFile à nettoyer 
         DataManager dataManager = new DataManager();
 
         Set<String> cleanedTweets = dataManager.cleanAllTweets(csvFile);
-
-
 
         HashMap <String,Integer> tweets_with_polarity = new HashMap<>();
 
@@ -129,38 +125,56 @@ public class DictionnaryClassifier implements ClassifierAlgorithm{
         //     System.out.println(key + " :    " + tweets_with_polarity.get(key));
         // }
        GenerateCSVFile (tweets_with_polarity);
-
     }
 
 
-    private void GenerateCSVFile (HashMap<String,Integer> tweets_with_polarity){
+    // private void GenerateCSVFile (HashMap<String,Integer> tweets_with_polarity){
+    //    try {
+    //         index_file_generate ++;
+    //         FileWriter fileWriter = new FileWriter(OUTPUTFILE.concat("-").concat(Integer.toString(index_file_generate).concat(FORMAT_OUTPUT_FILE)));
+    //         PrintWriter printWriter = new PrintWriter(fileWriter);
+
+    //         // printWriter.println("Tweet,polarity");
+
+    //         for (String tweet : tweets_with_polarity.keySet()){
+                
+    //             // tweet = tweet.replace (","," ");
+    //             // System.out.println(tweet);
+    //             printWriter.println(tweet + "," + tweets_with_polarity.get(tweet));               
+    //         }
+    //         printWriter.close();
+    //     } 
+    //     catch(IOException e){
+    //         e.printStackTrace();
+    //     }
+    // }
 
 
-       try {
-            index_file_generate ++;
+    /**
+     * @param tweets_with_polarity
+     */
+    private void GenerateCSVFile(HashMap<String, Integer> tweets_with_polarity) {
+        try {
+            index_file_generate++;
             FileWriter fileWriter = new FileWriter(OUTPUTFILE.concat("-").concat(Integer.toString(index_file_generate).concat(FORMAT_OUTPUT_FILE)));
             PrintWriter printWriter = new PrintWriter(fileWriter);
-
-            printWriter.println("Tweet,polarity");
-
-            for (String tweet : tweets_with_polarity.keySet()){
+    
+            for (String tweet : tweets_with_polarity.keySet()) {
+                // Remplacer les guillemets internes dans le tweet par des guillemets échappés
+                String formattedTweet = tweet.replace("\"", "\"\"");
                 
-                // tweet = tweet.replace (","," ");
-                // System.out.println(tweet);
-                printWriter.println(tweet + "," + tweets_with_polarity.get(tweet));
-                
+                // Entourer le tweet de guillemets pour qu'il soit traité comme une seule chaîne dans le CSV
+                printWriter.println("\"" + formattedTweet + "\"" + "," + tweets_with_polarity.get(tweet));
             }
-
+    
             printWriter.close();
-
-        }    
-        
-        catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
         
        
-    }
 
     // /* train the algorithm for the classification
     //  * @param textFile 
