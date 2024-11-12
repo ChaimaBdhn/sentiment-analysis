@@ -43,3 +43,7 @@ Si le fichier data importé n'est pos annoté  on a 2 cas :
  - Soit l'utilisateur peut annoter les données -> puis utiliser KNN --> afficher le résultat
 
  - Soit l'utilisateur ne veut pas --> on utilise l'annotation auto (exercice 2) --> puis utiliser KNN --> afficher le résultat
+
+
+
+ NOTE pour KNN : implémenter une méthode qui récupère la première et dernière colonne de chaque ligne du fichier csv puis nettoie uniquement le tweet dataManager.cleanAllTweets(csvFile -> [1]); 

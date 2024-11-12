@@ -1,10 +1,14 @@
 all: cls
 
 cls:
-	javac -sourcepath src -d classes src/data/*.java
-	java -cp classes data.DataManagerMain data/testdata.manual.2009.06.14.csv
+	# Compilation 
+	javac -sourcepath src -d bin src/**/*.java
+
+	# CSV File cleaned
+	# java -cp bin data.DataManagerMain data/testdata.manual.2009.06.14.csv
 
 
 clean:
-	rm -r classes 
+	rm -r bin 
 
+.PHONY: all clean
