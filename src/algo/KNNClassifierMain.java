@@ -22,7 +22,7 @@ public class KNNClassifierMain {
         KNNClassifier knnClassifier = new KNNClassifier(inputFile, basicDistance);
         knnClassifier.displayLearningBase();
 
-        // Integer value = knnClassifier.classifyTweet(tweetToTag,5);
-        // System.out.println(value);
+        Integer value = knnClassifier.classifyTweet(tweetToTag,10);
+        System.out.println(value);
     }
 }
