@@ -17,15 +17,12 @@ public class KNNClassifierMain {
         DistanceCalculation basicDistance = new BasicDistance();
         // DistanceCalculation levenshteinDistance = new LevenshteinDistance();
 
-     
-        /* Cleanes the file and tag */
-        dicoClassifier.automaticAnnotation(inputFile);
-
+        
         /* Classifying according to a distance method given in parameter */
-        KNNClassifier knnClassifier = new KNNClassifier("data/tweets_analyse-1.csv", basicDistance);
+        KNNClassifier knnClassifier = new KNNClassifier(inputFile, basicDistance);
         knnClassifier.displayLearningBase();
 
-        Integer value = knnClassifier.classifyTweet(tweetToTag,15);
-        System.out.println(value);
+        // Integer value = knnClassifier.classifyTweet(tweetToTag,5);
+        // System.out.println(value);
     }
 }

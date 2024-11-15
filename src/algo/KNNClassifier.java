@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+import data.TweetCleaner;
 import distance.DistanceCalculation;
 
 /* This class aims to implement KNN algorithm */
@@ -28,13 +29,11 @@ public class KNNClassifier {
     }
 
 
-    /** Displays the learning base
+    /** Displays the learning base in form string : value 
      * @param learningBase the learning base cleaned and tagged
      */
     public void displayLearningBase() {
-        for (Map.Entry<String, Integer> entry : this.learningBase.entrySet()) {
-            System.out.println("\"" + entry.getKey() + "\" : " + entry.getValue());
-        }
+        this.learningBase.forEach((key, value) -> System.out.println("\"" + key + "\" : " + value));
     }
     
 
@@ -42,20 +41,21 @@ public class KNNClassifier {
      * @param csvFile the csv file we change into a learning base
      * @return the map with each tweet associated with its class
      */
-    public Map<String, Integer> initLearningBase(String csvFile) {
+    public Map<String,Integer> initLearningBase(String csvFile) {
         Map<String, Integer> learningBase = new HashMap<>();
-    
+
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             String line;
             while ((line = br.readLine()) != null) {
-                // Trouver la dernière virgule dans la ligne
-                int lastCommaIndex = line.lastIndexOf(",");
-    
-                // Séparer la ligne en fonction de cette virgule
-                String key = line.substring(0, lastCommaIndex).trim(); // La chaîne avant la dernière virgule
-                String value = line.substring(lastCommaIndex + 1).trim(); // L'entier après la dernière virgule
-    
-                learningBase.put(key, Integer.valueOf(value));
+                String[] columns = line.split("\",\"");
+                
+                int polarity = Integer.parseInt(columns[0].replace("\"", ""));
+                String tweet = columns[columns.length - 1].replace("\"", "");
+
+                // Nettoyage du tweet avec cleanAllTweets
+                String cleanedTweet = TweetCleaner.cleanTweet(tweet);
+
+                learningBase.put(cleanedTweet, polarity);
             }
         } catch (IOException e) {
             e.printStackTrace();
