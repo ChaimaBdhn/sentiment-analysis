@@ -1,68 +1,23 @@
 package algo;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
 
-import data.TweetCleaner;
 import distance.DistanceCalculation;
 
 /* This class aims to implement KNN algorithm */
-public class KNNClassifier {
-
-    /* Code for class */
-    private static final Integer NEGATIVE = 0, NEUTRAL = 2, POSITIVE = 4 ;
-
-    /* Learning base we are using */
-    private Map<String, Integer> learningBase;
+public class KNNClassifier extends ClassifierAlgorithm implements Polarity {
 
     /* Calculation method we chose for KNN classification */
     DistanceCalculation calculationMethod;
 
-    /** KNN Classifier is defined by its learning base initially cleaned and tagged
+    /** KNN Classifier is defined by its learning base initially cleaned and tagged and a specific calculation method
      * @param csvFile the learning base
+     * @param calculationMethod the distance calculation method
      */
     public KNNClassifier(String csvFile, DistanceCalculation calculationMethod) {
-        this.learningBase = this.initLearningBase(csvFile);
+        super(csvFile);
         this.calculationMethod = calculationMethod;
     }
-
-
-    /** Displays the learning base in form string : value 
-     * @param learningBase the learning base cleaned and tagged
-     */
-    public void displayLearningBase() {
-        this.learningBase.forEach((key, value) -> System.out.println("\"" + key + "\" : " + value));
-    }
-    
-
-    /** Opens the csv file and creates a map that associates each tweet as a key, with its class (positive, negative or neutral) as a value
-     * @param csvFile the csv file we change into a learning base
-     * @return the map with each tweet associated with its class
-     */
-    public Map<String,Integer> initLearningBase(String csvFile) {
-        Map<String, Integer> learningBase = new HashMap<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] columns = line.split("\",\"");
-                
-                int polarity = Integer.parseInt(columns[0].replace("\"", ""));
-                String tweet = columns[columns.length - 1].replace("\"", "");
-
-                // Nettoyage du tweet avec cleanAllTweets
-                String cleanedTweet = TweetCleaner.cleanTweet(tweet);
-
-                learningBase.put(cleanedTweet, polarity);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return learningBase;
-    }
-    
 
 
     /** Calculates all distances between a tweet and each of its neighbor in a list
@@ -123,22 +78,22 @@ public class KNNClassifier {
         int positive_cpt = 0;
 
         for(Integer value : nearestNeighbors.values()) {
-            if(value.equals(NEGATIVE))
+            if(value.equals(Polarity.NEGATIVE))
                 negative_cpt++;
-            if(value.equals(NEUTRAL))
+            if(value.equals(Polarity.NEUTRAL))
                 neutral_cpt++;
-            if(value.equals(POSITIVE))
+            if(value.equals(Polarity.POSITIVE))
                 positive_cpt++;
         }
 
         if (positive_cpt > negative_cpt && positive_cpt > neutral_cpt) {
-            return POSITIVE;
+            return Polarity.POSITIVE;
         } else if (negative_cpt > positive_cpt && negative_cpt > neutral_cpt) {
-            return NEGATIVE;
+            return Polarity.NEGATIVE;
         } else if (neutral_cpt > positive_cpt && neutral_cpt > negative_cpt) {
-            return NEUTRAL;
+            return Polarity.NEUTRAL;
         } else {
-            return NEUTRAL;
+            return Polarity.NEUTRAL;
         }
     }
     
@@ -170,16 +125,16 @@ public class KNNClassifier {
         Map<String, Integer> proches_voisins = new HashMap<>();
 
         int count = 0; 
-        for(String tweetNeighbor : this.learningBase.keySet()) {
+        for(String tweetNeighbor : super.getLearningBase().keySet()) {
             if(count <= k) {
-                proches_voisins.put(tweetNeighbor, this.learningBase.get(tweetNeighbor)); // ajoute dans la map le tweet voisin (clé) et récupère sa valeur associée selon la clé pour l'ajouter
+                proches_voisins.put(tweetNeighbor, super.getLearningBase().get(tweetNeighbor)); // ajoute dans la map le tweet voisin (clé) et récupère sa valeur associée selon la clé pour l'ajouter
                 count++;                
             } else {
                 break;
             }
         }
 
-        for(String tweetNeighbor : this.learningBase.keySet()) {
+        for(String tweetNeighbor : super.getLearningBase().keySet()) {
             // on parcourt le reste des tweets de la base à partir de k+1 (on prends donc ceux qui n'ont pas encore été ajoutés)
             if(!proches_voisins.containsKey(tweetNeighbor)) {
                 int distToNeighbor = this.calculationMethod.distance(tweetNeighbor, x);
@@ -188,7 +143,7 @@ public class KNNClassifier {
                 if(this.isLessThanAny(distToNeighbor, distXtoProchesVoisins)) {
                     String furthestTweet = this.getFurthestTweet(x, proches_voisins);
                     proches_voisins.remove(furthestTweet);
-                    proches_voisins.put(tweetNeighbor, this.learningBase.get(tweetNeighbor));
+                    proches_voisins.put(tweetNeighbor, super.getLearningBase().get(tweetNeighbor));
                 }
             }
         }

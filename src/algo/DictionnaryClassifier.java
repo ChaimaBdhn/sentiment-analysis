@@ -12,7 +12,7 @@ import java.util.Set;
 import data.DataManager;
 
 /* A class that represent the dictionnary classifier */
-public class DictionnaryClassifier implements ClassifierAlgorithm{
+public class DictionnaryClassifier implements Polarity {
 
     
     /* The positive sentiments words list*/
@@ -21,10 +21,6 @@ public class DictionnaryClassifier implements ClassifierAlgorithm{
 
     /* The negative sentiments words list*/
     private Set<String> negativeWords;
-
-
-    /*polarity */
-    private static final int NEGATIVE = 0, NEUTRAL = 2, POSITIVE = 4 ; 
 
 
     public static final String OUTPUTFILE = "./data/tweets_analyse";
@@ -95,13 +91,12 @@ public class DictionnaryClassifier implements ClassifierAlgorithm{
             }
         }
         if (nb_negative_words < nb_positive_words) {
-            return POSITIVE;
+            return Polarity.POSITIVE;
         }
         else if (nb_negative_words > nb_positive_words){
-            return NEGATIVE;
+            return Polarity.NEGATIVE;
         }
-        return NEUTRAL;
-
+        return Polarity.NEUTRAL;
     }
 
     /**

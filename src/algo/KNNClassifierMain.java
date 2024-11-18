@@ -2,7 +2,7 @@ package algo;
 
 import distance.BasicDistance;
 import distance.DistanceCalculation;
-// import distance.LevenshteinDistance;
+import distance.LevenshteinDistance;
 
 public class KNNClassifierMain {
     public static void main(String[] args) {
@@ -13,16 +13,20 @@ public class KNNClassifierMain {
 
 
         /* Initializes necessaries objects */
-        DictionnaryClassifier dicoClassifier = new DictionnaryClassifier();
         DistanceCalculation basicDistance = new BasicDistance();
-        // DistanceCalculation levenshteinDistance = new LevenshteinDistance();
+        DistanceCalculation levenshteinDistance = new LevenshteinDistance();
 
         
         /* Classifying according to a distance method given in parameter */
-        KNNClassifier knnClassifier = new KNNClassifier(inputFile, basicDistance);
-        knnClassifier.displayLearningBase();
+        KNNClassifier knnClassifierB = new KNNClassifier(inputFile, basicDistance);
+        KNNClassifier knnClassifierL = new KNNClassifier(inputFile, levenshteinDistance);
 
-        Integer value = knnClassifier.classifyTweet(tweetToTag,10);
-        System.out.println(value);
+        // knnClassifier.displayLearningBase();
+
+        Integer valueB = knnClassifierB.classifyTweet(tweetToTag,5);
+        System.out.println("basic distance : " + valueB);
+
+        Integer valueL = knnClassifierL.classifyTweet(tweetToTag,5);
+        System.out.println("levenshtein distance : " + valueL);
     }
 }
