@@ -62,5 +62,13 @@ public abstract class ClassifierAlgorithm {
         return learningBase;
     }
 
+
+    /** 
+     * @return
+     */
+    // public abstract Integer execute() {
+    //     todo 
+    // }
+
     
 }
