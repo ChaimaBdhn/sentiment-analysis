@@ -21,8 +21,6 @@ public abstract class ClassifierAlgorithm {
         this.learningBase = this.initLearningBase(csvFile);
     }
 
-    // TEMP : TO DELETE AFTER TESTS
-    public ClassifierAlgorithm() {}
 
     /** Displays the learning base in form string : value 
      * @param learningBase the learning base cleaned and tagged

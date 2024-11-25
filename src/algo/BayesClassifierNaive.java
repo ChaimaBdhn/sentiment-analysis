@@ -1,46 +1,59 @@
 package algo;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BayesClassifier extends ClassifierAlgorithm {
+/** Naive classifier based on Bayes algorithm */
+public abstract class BayesClassifierNaive extends ClassifierAlgorithm {
 
     /** 
-     * @param csvFile
+     * {@inheritDoc}
      */
-    public BayesClassifier(String csvFile) {
+    public BayesClassifierNaive(String csvFile) {
         super(csvFile);
     }
 
-    /**
-     * @param sentence
-     * @return
+
+    /** Determines the most likely polarity for a given tweet
+     * @param tweet the tweet to classify
+     * @return the most likely polarity for a given tweet (Positive, Negative or Neutral)
      */
-    public String[] getWordsFromSentence(String sentence) {
-        return sentence.trim().toLowerCase().split("[\\s'()/{}\\[\\]]+");
+    public Polarity execute(String tweet) {
+        Polarity bestPolarity = null;
+        double maxProbability = -1;
+
+        // Routes through the different polarities
+        for (Polarity polarity : Polarity.values()) {
+            // Calculates the probability for an actual polarity
+            double probability = this.probabilityByPolarity(tweet, polarity);
+
+            // Updates polarity if the probability is higher
+            if (probability > maxProbability) {
+                maxProbability = probability;
+                bestPolarity = polarity;
+            }
+        }
+        return bestPolarity;
     }
-    
+ 
 
     /** Probabilité pour un tweet donné de correspondre à la polarité en paramètre
-     * @param tweet
-     * @param polarity
-     * @return
-     */
-    public double probabilityByPolarity(String tweet, Polarity polarity) {
-        String[] words = this.getWordsFromSentence(tweet);
-        double occProbaForEachWord = 1;
+     * @param tweet 
+     * @param polarity 
+     * @return 
+     */ 
+    public abstract double probabilityByPolarity(String tweet, Polarity polarity);
 
-        for(int i=0; i < words.length; i++) {
-            occProbaForEachWord *= this.occurrenceProbability(words[i], polarity);
-        }
-        return (occProbaForEachWord * this.totalTweetsByPolarity(polarity));
-    }
 
     
     /** Probabilité d'occurrence d'un mot dans un tweet de classe c 
      * @return probability of a given word occurence in a tweet of a specific polarity
      */
     public double occurrenceProbability(String word, Polarity polarity) {
-        return (this.nbOccurrenceWordByPolarity(word, polarity) +1) / (double)(this.totalWordsByPolarity(polarity) + this.totalWordsInLearningBase());
+        return (this.nbOccurrenceWordByPolarity(word, polarity) +1) / 
+               (double)(this.totalWordsByPolarity(polarity) + this.totalWordsInLearningBase());
     }
 
 
@@ -63,8 +76,8 @@ public class BayesClassifier extends ClassifierAlgorithm {
      * @return the number of words contained in a sentence
      */
     public int countWords(String sentence) {
-        // Avoiding multiple spaces 
-        String[] words = this.getWordsFromSentence(sentence);
+        // Retrieving each words from sentence 
+        List<String> words = this.extractWords(sentence);
         // Word is composed of one or several letters
         Pattern wordPattern = Pattern.compile("[.,!?]*\\p{L}+[\\p{L}\\d]*(?:'[\\p{L}\\d]+)?[.,!?]*");
         int count = 0;
@@ -139,8 +152,23 @@ public class BayesClassifier extends ClassifierAlgorithm {
         return occurrence;
     }
 
-
-
+    
+    /** Extracting each word from a sentence
+     * @param sentence the string we extract from 
+     * @return a list containing each word
+     */
+    public List<String> extractWords(String sentence) {
+        List<String> words = new ArrayList<>();
+        
+        // Recognizing alphanumeric words 
+        Pattern pattern = Pattern.compile("\\b[A-Za-z]+[A-Za-z0-9]*\\b");
+        Matcher matcher = pattern.matcher(sentence);
+        
+        while (matcher.find()) {
+            words.add(matcher.group()); // Ajouter chaque mot trouvé à la liste
+        }
+        return words;
+    }
 
 
 }

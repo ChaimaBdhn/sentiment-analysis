@@ -1,25 +1,25 @@
 package algo;
 
-// public interface Polarity {
-
-//     public static final Integer NEGATIVE = 0;
-//     public static final Integer NEUTRAL = 2;
-//     public static final Integer POSITIVE = 4;
-    
-// }
-
 /* Polarity : 0 for negative sentiment, 2 for neutral sentiment and 4 for positive sentiment */
 public enum Polarity {
+
     NEGATIVE(0),
     NEUTRAL(2),
     POSITIVE(4);
 
+    /** Value corresponding to the polarity */
     private final Integer value;
 
+    /** Polarity is defined by its value
+     * @param value
+     */
     Polarity(int value) {
         this.value = value;
     }
 
+    /** Retrieves the polarity value
+     * @return the polarity value
+     */
     public Integer getValue() {
         return value;
     }

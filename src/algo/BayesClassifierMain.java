@@ -6,7 +6,9 @@ public class BayesClassifierMain {
         
         String inputFile = "data/testdata.bayes.csv";
 
-        BayesClassifier bc = new BayesClassifier(inputFile);
+        BayesClassifierNaive bc = new BayesClassifierNaive(inputFile);
+
+        bc.displayLearningBase();
 
         // Tests countWords
         // System.out.println(bc.countWords("Bonjour le monde!")); // 3
@@ -18,15 +20,15 @@ public class BayesClassifierMain {
         // System.out.println(bc.countWords(sentence));
         
 
-        // Test occurenceInSentence
+        // Tests occurenceInSentence
         // String str = "salut la compagnie, je suis en bonne compagnie";
         // String str2 = "non non non et non!";
         // System.out.println(str + " : " + bc.occurrenceInSentence("compagnie", str));
         // System.out.println(str2 + " : " + bc.occurrenceInSentence("non", str2));
 
         // Test learning base
-        bc.displayLearningBase();
         // System.out.println(bc.totalWordsInLearningBase());
+
 
         // Test total words by polarity
         // System.out.println(bc.totalWordsByPolarity(Polarity.NEGATIVE));
@@ -36,6 +38,9 @@ public class BayesClassifierMain {
 
         // Test totalTweetsByPolarity
         // System.out.println(bc.totalTweetsByPolarity(Polarity.NEGATIVE));
+
+
+        // TODO: TEST CLASSIFY 
 
     }   
     

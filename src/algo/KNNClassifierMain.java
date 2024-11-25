@@ -10,7 +10,7 @@ public class KNNClassifierMain {
         // String inputFile = "data/testdata.knn.csv";
         String inputFile = "data/testdata.manual.2009.06.14.csv";
 
-        String tweetToTag = "fuck it i hate that !";
+        String tweetToTag = "I really hate that !";
 
         /* Initializes necessaries objects */
         DistanceCalculation basicDistance = new BasicDistance();
