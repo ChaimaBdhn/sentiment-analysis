@@ -7,26 +7,24 @@ import distance.LevenshteinDistance;
 public class KNNClassifierMain {
     public static void main(String[] args) {
 
-        String inputFile = "data/testdata.knn.csv";
+        // String inputFile = "data/testdata.knn.csv";
+        String inputFile = "data/testdata.manual.2009.06.14.csv";
 
-        String tweetToTag = "A beautiful day!";
-
+        String tweetToTag = "fuck it i hate that !";
 
         /* Initializes necessaries objects */
         DistanceCalculation basicDistance = new BasicDistance();
         DistanceCalculation levenshteinDistance = new LevenshteinDistance();
-
         
-        /* Classifying according to a distance method given in parameter */
+        /* Classifying according to a given distance method */
         KNNClassifier knnClassifierB = new KNNClassifier(inputFile, basicDistance);
         KNNClassifier knnClassifierL = new KNNClassifier(inputFile, levenshteinDistance);
+        
+        Polarity valueB = knnClassifierB.classifyTweet(tweetToTag,15); 
+        System.out.println("Basic distance : " + valueB);
 
-        // knnClassifier.displayLearningBase();
+        Polarity valueL = knnClassifierL.classifyTweet(tweetToTag, 15);
+        System.out.println("Levenshtein distance : " + valueL);
 
-        Integer valueB = knnClassifierB.classifyTweet(tweetToTag,5);
-        System.out.println("basic distance : " + valueB);
-
-        Integer valueL = knnClassifierL.classifyTweet(tweetToTag,5);
-        System.out.println("levenshtein distance : " + valueL);
     }
 }

@@ -21,6 +21,8 @@ public abstract class ClassifierAlgorithm {
         this.learningBase = this.initLearningBase(csvFile);
     }
 
+    // TEMP : TO DELETE AFTER TESTS
+    public ClassifierAlgorithm() {}
 
     /** Displays the learning base in form string : value 
      * @param learningBase the learning base cleaned and tagged
@@ -29,7 +31,7 @@ public abstract class ClassifierAlgorithm {
         this.learningBase.forEach((key, value) -> System.out.println("\"" + key + "\" : " + value));
     }
 
-    /** Retrieves the learning base to use
+    /** Retrieves the learning base
      * @return the learning base
      */
     public Map<String, Integer> getLearningBase() {

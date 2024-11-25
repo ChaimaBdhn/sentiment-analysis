@@ -5,7 +5,7 @@ import java.util.*;
 import distance.DistanceCalculation;
 
 /* This class aims to implement KNN algorithm */
-public class KNNClassifier extends ClassifierAlgorithm implements Polarity {
+public class KNNClassifier extends ClassifierAlgorithm {
 
     /* Calculation method we chose for KNN classification */
     DistanceCalculation calculationMethod;
@@ -67,52 +67,35 @@ public class KNNClassifier extends ClassifierAlgorithm implements Polarity {
     }    
 
 
-    /** Votes for the majority class
-     * @param nearestNeighbors list of the nearest neighbors
+    /** Determines the majority class
+     * @param neighbors list of the nearest neighbors
      * @return the value of majority class
      * todo : should we use List<Integer> only in parameter ?
      */
-    public Integer vote(Map<String, Integer> nearestNeighbors) {
-        int negative_cpt = 0;
-        int neutral_cpt = 0;
-        int positive_cpt = 0;
-
-        for(Integer value : nearestNeighbors.values()) {
-            if(value.equals(Polarity.NEGATIVE))
-                negative_cpt++;
-            if(value.equals(Polarity.NEUTRAL))
-                neutral_cpt++;
-            if(value.equals(Polarity.POSITIVE))
-                positive_cpt++;
+    public Integer vote(Collection<Integer> neighbors) {
+        int cptPositif = 0;
+        int cptNegatif = 0;
+        int cptNeutre = 0;
+    
+        // Parcourez la map des voisins pour compter les occurrences des classes
+        for (Integer value : neighbors) {
+            if (value.equals(Polarity.POSITIVE.getValue())) {
+                cptPositif++;
+            } else if (value.equals(Polarity.NEGATIVE.getValue())) {
+                cptNegatif++;
+            } else if (value.equals(Polarity.NEUTRAL.getValue())) {
+                cptNeutre++;
+            }
         }
-
-        if (positive_cpt > negative_cpt && positive_cpt > neutral_cpt) {
-            return Polarity.POSITIVE;
-        } else if (negative_cpt > positive_cpt && negative_cpt > neutral_cpt) {
-            return Polarity.NEGATIVE;
-        } else if (neutral_cpt > positive_cpt && neutral_cpt > negative_cpt) {
-            return Polarity.NEUTRAL;
+    
+        if (cptNeutre >= cptPositif && cptNeutre >= cptNegatif) {
+            return Polarity.NEUTRAL.getValue();
+        } else if (cptPositif > cptNegatif) {
+            return Polarity.POSITIVE.getValue();
         } else {
-            return Polarity.NEUTRAL;
+            return Polarity.NEGATIVE.getValue();
         }
     }
-    
-
-//     public String vote(Map<String, String> nearestNeighbors) {
-//         Map<String, Integer> counts = new HashMap<>();
-//         counts.put(NEGATIVE, 0);
-//         counts.put(NEUTRAL, 0);
-//         counts.put(POSITIVE, 0);
-//
-//         for (String value : nearestNeighbors.values()) {
-//             counts.put(value, counts.get(value) + 1);
-//         }
-//
-//         return counts.entrySet().stream()
-//                      .max(Map.Entry.comparingByValue())
-//                      .get()
-//                      .getKey();
-//     }
 
 
 
@@ -121,34 +104,38 @@ public class KNNClassifier extends ClassifierAlgorithm implements Polarity {
      * @param k the number of neighbors
      * @return the majority class of the tweet : positive, negative or neutral
      */
-    public Integer classifyTweet(String x, int k) {
+    public Polarity classifyTweet(String x, int k) {
         Map<String, Integer> proches_voisins = new HashMap<>();
+        List<String> learningBaseKeys = new ArrayList<>(this.getLearningBase().keySet());
+        
+        // 1. Adding k firsts nearest neighbors
+        int count = 0;
+        while (count < k && count < learningBaseKeys.size()) {
+            String tweetNeighbor = learningBaseKeys.get(count); // Retrieves the neighbor tweet at index "count"
+            proches_voisins.put(tweetNeighbor, this.getLearningBase().get(tweetNeighbor)); // Adds the neighbor tweet and its value to the list containing nearest neighbors
+            count++;
+        }
+        
+        // 2. (k+1 to N) : other neighbors
+        for (int i = k; i < learningBaseKeys.size(); i++) {
+            String tweetNeighbor = learningBaseKeys.get(i);
+            int distToNeighbor = this.calculationMethod.distance(tweetNeighbor, x); // Gets distance between tweet x and the neighbor i
 
-        int count = 0; 
-        for(String tweetNeighbor : super.getLearningBase().keySet()) {
-            if(count <= k) {
-                proches_voisins.put(tweetNeighbor, super.getLearningBase().get(tweetNeighbor)); // ajoute dans la map le tweet voisin (clé) et récupère sa valeur associée selon la clé pour l'ajouter
-                count++;                
-            } else {
-                break;
+            // Retrieves distances of actual k neighbors 
+            List<Integer> distXtoProchesVoisins = allDistances(x, new ArrayList<>(proches_voisins.keySet()));
+            // Verifies if distance between x and this neighbor is smaller than one of a distance in nearest neighbors
+            if (this.isLessThanAny(distToNeighbor, distXtoProchesVoisins)) {
+                String furthestTweet = this.getFurthestTweet(x, proches_voisins);
+
+                proches_voisins.remove(furthestTweet); // Removes the furthest tweet from x 
+                proches_voisins.put(tweetNeighbor, this.getLearningBase().get(tweetNeighbor)); // Adds new neighbor
             }
         }
+        // proches_voisins.forEach((key, value) -> System.out.println(key + " : " + value));
 
-        for(String tweetNeighbor : super.getLearningBase().keySet()) {
-            // on parcourt le reste des tweets de la base à partir de k+1 (on prends donc ceux qui n'ont pas encore été ajoutés)
-            if(!proches_voisins.containsKey(tweetNeighbor)) {
-                int distToNeighbor = this.calculationMethod.distance(tweetNeighbor, x);
-                List<Integer> distXtoProchesVoisins = allDistances(x, new ArrayList<>(proches_voisins.keySet()));
-
-                if(this.isLessThanAny(distToNeighbor, distXtoProchesVoisins)) {
-                    String furthestTweet = this.getFurthestTweet(x, proches_voisins);
-                    proches_voisins.remove(furthestTweet);
-                    proches_voisins.put(tweetNeighbor, super.getLearningBase().get(tweetNeighbor));
-                }
-            }
-        }
-        return vote(proches_voisins);
+        return Polarity.fromValue(vote(proches_voisins.values()));
     }
 
 
 }
+

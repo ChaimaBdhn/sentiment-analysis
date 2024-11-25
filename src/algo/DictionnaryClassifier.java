@@ -12,12 +12,10 @@ import java.util.Set;
 import data.DataManager;
 
 /* A class that represent the dictionnary classifier */
-public class DictionnaryClassifier implements Polarity {
-
+public class DictionnaryClassifier {
     
     /* The positive sentiments words list*/
     private Set<String> positiveWords;
-
 
     /* The negative sentiments words list*/
     private Set<String> negativeWords;
@@ -35,7 +33,6 @@ public class DictionnaryClassifier implements Polarity {
     }
 
     /* initialization of sets with positives and negatives words */
-    
     private void loadData (){
 
         try{
@@ -91,12 +88,12 @@ public class DictionnaryClassifier implements Polarity {
             }
         }
         if (nb_negative_words < nb_positive_words) {
-            return Polarity.POSITIVE;
+            return Polarity.POSITIVE.getValue();
         }
         else if (nb_negative_words > nb_positive_words){
-            return Polarity.NEGATIVE;
+            return Polarity.NEGATIVE.getValue();
         }
-        return Polarity.NEUTRAL;
+        return Polarity.NEUTRAL.getValue();
     }
 
     /**
